@@ -25,34 +25,32 @@ def generate_password():
 
 #---------------------------- SAVE PASSWORD ------------------------------- #
 def save_password():
-
     website = input_website.get()
     username = input_username.get()
     password = input_password.get()
-    new_data = {website:{"username":username, "password":password }}
-
+    new_data = {website: {"username": username, "password": password}}
 
     if len(website) == 0 or len(username) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops", message="Make sure you haven't left any fields empty")
     else:
         try:
             with open("data.json", "r") as data_file:
-                #Reading old data
+                # Try reading old data
                 data = json.load(data_file)
-        except FileNotFoundError:
-            with open("data.json", "w") as data_file:
-                json.dump(new_data, data_file, indent=4)
+        except (FileNotFoundError, json.JSONDecodeError):
+            # If the file doesn't exist or is empty, initialize `data` as an empty dictionary
+            data = {}
 
-        else:
-            # Updating old data with new data
-            data.update(new_data)
+        # Update data with the new entry
+        data.update(new_data)
 
-            with open("data.json", "w") as data_file:
-                # Saving updated data
-                json.dump(data, data_file, indent=4)
-        finally:
-            input_website.delete(0, END)
-            input_password.delete(0, END)
+        with open("data.json", "w") as data_file:
+            # Save updated data
+            json.dump(data, data_file, indent=4)
+
+        # Clear the input fields
+        input_website.delete(0, END)
+        input_password.delete(0, END)
 #---------------------------Search--------------------------------------#
 def search_website():
     website = input_website.get()
